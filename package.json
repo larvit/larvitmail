@@ -1,0 +1,43 @@
+{
+  "name": "larvitmail",
+  "version": "0.0.1",
+  "description": "nodemailer wrapper",
+  "main": "index.js",
+  "dependencies": {
+    "async": "^1.5.2",
+    "larvitfs": "^1.0.0",
+    "winston": "^2.2.0",
+    "nodemailer": "^2.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^2.8.0",
+    "lodash": "^4.11.1",
+    "mocha": "^2.4.5",
+    "pre-git": "^3.8.3"
+  },
+  "scripts": {},
+  "repository": "https://github.com/larvit/larvitmail.git",
+  "keywords": [
+    "order",
+    "orders",
+    "multi-purpose"
+  ],
+  "author": "gagge <tobias@nublar.se>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/larvit/larvitmail/issues"
+  },
+  "homepage": "https://github.com/larvit/larvitmail#readme",
+  "config": {
+    "pre-git": {
+      "pre-commit": [
+        "npm test",
+        "eslint ./"
+      ],
+      "pre-push": [],
+      "post-commit": [],
+      "post-merge": [],
+      "commit-msg": []
+    }
+  }
+}
