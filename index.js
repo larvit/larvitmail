@@ -36,8 +36,6 @@ Mail.prototype.send = function(cb) {
 			return;
 		}
 
-		console.log('response');
-
 		cb(null, response);
 	});
 };
