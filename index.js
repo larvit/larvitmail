@@ -22,6 +22,9 @@ function Mail(mailOptions) {
 		this.mailConf = require(process.cwd() + '/config/mailConf.json');
 	}
 
+	if (this.mailOptions.from === undefined)
+		this.mailOptions.from = this.mailConf.defaultFrom;
+
 	this.transporter = mailer.createTransport(this.mailConf);
 }
 
