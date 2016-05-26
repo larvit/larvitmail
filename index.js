@@ -11,7 +11,7 @@ function Mail(mailOptions) {
 	if (mailOptions === undefined)
 		this.mailOptions = {};
 
-	if (lfs.getPathSync(process.cwd() + '/config/mailConfs.json') === false) {
+	if (lfs.getPathSync(process.cwd() + '/config/mailConf.json') === false) {
 		this.mailConf = {
 			'port': 25,
 			'host': 'localhost',
