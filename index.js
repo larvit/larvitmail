@@ -113,7 +113,7 @@ function setup(options) {
 		options = {};
 	}
 
-	if (options.transportConf	=== undefined) {	options.transportConf	= 'smtp://localhost';	}
+	if (options.transportConf	=== undefined) {	options.transportConf	= 'smtp://127.0.0.1';	}
 	if (options.instanceName 	=== undefined) {	options.instanceName	= 'default';	}
 	if (options.mailDefaults 	=== undefined) {	options.mailDefaults	= {};	}
 	if (options.mailDefaults.from	=== undefined) {	options.mailDefaults.from	= 'node@' + require('os').hostname() + '.local';	}
