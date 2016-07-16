@@ -1,13 +1,13 @@
 {
   "name": "larvitmail",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "nodemailer wrapper",
   "main": "index.js",
   "dependencies": {
     "async": "^1.5.2",
-    "larvitfs": "^1.0.0",
-    "winston": "^2.2.0",
-    "nodemailer": "^2.3.2"
+    "node-uuid": "^1.4.7",
+    "nodemailer": "^2.3.2",
+    "winston": "^2.2.0"
   },
   "devDependencies": {
     "eslint": "^2.8.0",
@@ -15,12 +15,13 @@
     "mocha": "^2.4.5",
     "pre-git": "^3.8.3"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "mocha"
+  },
   "repository": "https://github.com/larvit/larvitmail.git",
   "keywords": [
-    "order",
-    "orders",
-    "multi-purpose"
+    "email",
+    "mail"
   ],
   "author": "gagge <tobias@nublar.se>",
   "license": "MIT",
