@@ -61,6 +61,10 @@ Instance.prototype.send = function send(mailOptions, cb) {
 		return;
 	}
 
+	if (mailOptions.from === undefined) {
+		mailOptions.from = this.options.mailDefaults.from;
+	}
+
 	this.transport.sendMail(mailOptions, function(err, info) {
 		if (err) {
 			log.warn('larvitmail: Instance.send() - uuid: ' + uuid + ' err: ' + err.message);
@@ -121,6 +125,8 @@ function setup(options) {
 	log.info('larvitmail: setup() - Running with options: ' + util.inspect(options));
 
 	if (exports.instances[options.instanceName]	=== undefined) {	exports.instances[options.instanceName]	= new Instance();	}
+
+	exports.instances[options.instanceName].options = options;
 
 	try {
 		exports.instances[options.instanceName].transport = nodeMailer.createTransport(options.transportConf);
