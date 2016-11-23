@@ -5,8 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "async": "^1.5.2",
-    "node-uuid": "^1.4.7",
     "nodemailer": "^2.3.2",
+    "uuid": "^3.0.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {
