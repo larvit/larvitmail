@@ -1,7 +1,7 @@
 'use strict';
 
 const	nodeMailer	= require('nodemailer'),
-	uuidLib	= require('node-uuid'),
+	uuidLib	= require('uuid'),
 	util	= require('util'),
 	log	= require('winston');
 
