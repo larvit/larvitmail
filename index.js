@@ -91,7 +91,7 @@ Instance.prototype.send = function send(mailOptions, cb) {
 		}
 
 		if (info && info.response) {
-			log.debug('larvitmail: Instance.send() - uuid: ' + uuid + ' SMTP response: ' + info.response);
+			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' SMTP response: ' + info.response);
 		}
 
 		cb(err, info);
