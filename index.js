@@ -1,6 +1,7 @@
 'use strict';
 
-const	nodeMailer	= require('nodemailer'),
+const	topLogPrefix	= 'larvitmail: ./index.js: ',
+	nodeMailer	= require('nodemailer'),
 	uuidLib	= require('uuid'),
 	util	= require('util'),
 	log	= require('winston');
@@ -13,17 +14,19 @@ const	nodeMailer	= require('nodemailer'),
  * @return obj or undefined - obj being an instance of new Instance()
  */
 function getInstance(instanceName) {
+	const	logPrefix	= topLogPrefix + 'getInstance() - ';
+
 	if (instanceName === undefined) {
-		instanceName = 'default';
-		log.debug('larvitmail: getInstance() - No instanceName given, falling back to "' + instanceName + '"');
+		instanceName	= 'default';
+		log.debug(logPrefix + 'No instanceName given, falling back to "' + instanceName + '"');
 	} else {
-		log.debug('larvitmail: getInstance() - Ran with instanceName "' + instanceName + '"');
+		log.debug(logPrefix + 'Ran with instanceName "' + instanceName + '"');
 	}
 
 	if (exports.instances[instanceName] === undefined) {
-		log.warn('larvitmail: getInstance() - Trying to get an undefined instance "' + instanceName + '"');
+		log.warn(logPrefix + 'Trying to get an undefined instance "' + instanceName + '"');
 	} else {
-		log.debug('larvitmail: getInstance() - Instance "' + instanceName + '" found');
+		log.debug(logPrefix + 'Instance "' + instanceName + '" found');
 	}
 
 	return exports.instances[instanceName];
@@ -39,9 +42,10 @@ function Instance() {
  * @param func cb(err, info)	https://github.com/nodemailer/nodemailer#sending-mail for details
  */
 Instance.prototype.send = function send(mailOptions, cb) {
-	const uuid = uuidLib.v4();
+	const	logPrefix	= topLogPrefix + 'send() - uuid: ' + uuid + ' ',
+		uuid	= uuidLib.v4();
 
-	log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' To: "' + mailOptions.to + '" Subject: "' + mailOptions.subject + '"');
+	log.verbose(logPrefix + 'To: "' + mailOptions.to + '" Subject: "' + mailOptions.subject + '"');
 
 	if (typeof cb !== 'function') {
 		cb = function(){};
@@ -49,49 +53,46 @@ Instance.prototype.send = function send(mailOptions, cb) {
 
 	if (this.transport === undefined) {
 		const err = new Error('this.transport is not defined');
-		log.warn('larvitmail: Instance.send() - uuid: ' + uuid + ' ' + err.message);
-		cb(err);
-		return;
+		log.warn(logPrefix + err.message);
+		return cb(err);
 	}
 
 	if (typeof this.transport.sendMail !== 'function') {
 		const err = new Error('this.transport.sendMail is not a function');
-		log.warn('larvitmail: Instance.send() - uuid: ' + uuid + ' ' + err.message);
-		cb(err);
-		return;
+		log.warn(logPrefix + err.message);
+		return cb(err);
 	}
 
 	if (mailOptions.from === undefined) {
-		mailOptions.from = this.options.mailDefaults.from;
+		mailOptions.from	= this.options.mailDefaults.from;
 	}
 
 	this.transport.sendMail(mailOptions, function(err, info) {
 		if (err) {
-			log.warn('larvitmail: Instance.send() - uuid: ' + uuid + ' err: ' + err.message);
-			cb(err, info);
-			return;
+			log.warn(logPrefix + 'err: ' + err.message);
+			return cb(err, info);
 		}
 
 		if (info && info.messageId !== undefined) {
-			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' To: "' + mailOptions.to + '" messageId: ' + info.messageId);
+			log.verbose(logPrefix + 'To: "' + mailOptions.to + '" messageId: ' + info.messageId);
 		} else {
-			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' To: "' + mailOptions.to + '" no messageId obtained');
+			log.verbose(logPrefix + 'To: "' + mailOptions.to + '" no messageId obtained');
 		}
 
 		if (info && info.accepted && info.accepted.length) {
-			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' Accepted to: ' + info.accepted.join(', '));
+			log.verbose(logPrefix + 'Accepted to: ' + info.accepted.join(', '));
 		}
 
 		if (info && info.rejected && info.rejected.length) {
-			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' Rejected to: ' + info.rejected.join(', '));
+			log.verbose(logPrefix + 'Rejected to: ' + info.rejected.join(', '));
 		}
 
 		if (info && info.pending && info.pending.length) {
-			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' Pending to: ' + info.pending.join(', '));
+			log.verbose(logPrefix + 'Pending to: ' + info.pending.join(', '));
 		}
 
 		if (info && info.response) {
-			log.verbose('larvitmail: Instance.send() - uuid: ' + uuid + ' SMTP response: ' + info.response);
+			log.verbose(logPrefix + 'SMTP response: ' + info.response);
 		}
 
 		cb(err, info);
@@ -113,6 +114,8 @@ Instance.prototype.send = function send(mailOptions, cb) {
  * @return bol
  */
 function setup(options) {
+	const	logPrefix	= topLogPrefix + 'setup() - ';
+
 	if (options === undefined) {
 		options = {};
 	}
@@ -122,17 +125,19 @@ function setup(options) {
 	if (options.mailDefaults 	=== undefined) {	options.mailDefaults	= {};	}
 	if (options.mailDefaults.from	=== undefined) {	options.mailDefaults.from	= 'node@' + require('os').hostname() + '.local';	}
 
-	log.info('larvitmail: setup() - Running with options: ' + util.inspect(options));
+	log.info(logPrefix + 'Running with options: ' + util.inspect(options));
 
-	if (exports.instances[options.instanceName]	=== undefined) {	exports.instances[options.instanceName]	= new Instance();	}
+	if (exports.instances[options.instanceName] === undefined) {
+		exports.instances[options.instanceName]	= new Instance();
+	}
 
-	exports.instances[options.instanceName].options = options;
+	exports.instances[options.instanceName].options	= options;
 
 	try {
 		exports.instances[options.instanceName].transport = nodeMailer.createTransport(options.transportConf);
 		return true;
 	} catch(err) {
-		log.warn('larvitmail: setup() - Could not configure transport: ' + err.message + ' transporConf: ' + util.inspect(options.transportConf));
+		log.warn(logPrefix + 'Could not configure transport: ' + err.message + ' transporConf: ' + util.inspect(options.transportConf));
 		return false;
 	}
 }
