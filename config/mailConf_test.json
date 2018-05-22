@@ -1,6 +1,0 @@
-{
-	"transportConf": "smtp://username:password@smtp.mailtrap.io:2525",
-	"mailDefaults": {
-		"from": "foo@bar.com"
-	}
-}
