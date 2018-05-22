@@ -1,18 +1,19 @@
 {
   "name": "larvitmail",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "nodemailer wrapper",
   "main": "index.js",
   "dependencies": {
-    "async": "^1.5.2",
-    "nodemailer": "^2.3.2",
+    "async": "^2.6.1",
+    "nodemailer": "^4.6.4",
     "uuid": "^3.0.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "eslint": "^2.8.0",
+    "eslint": "^4.19.1",
     "lodash": "^4.11.1",
-    "mocha": "^2.4.5"
+    "tape": "^4.9.0",
+    "tape-eslint": "^1.2.1"
   },
   "scripts": {
     "test": "mocha"

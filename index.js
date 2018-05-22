@@ -16,7 +16,7 @@ const	topLogPrefix	= 'larvitmail: ./index.js: ',
 function getInstance(instanceName) {
 	const	logPrefix	= topLogPrefix + 'getInstance() - ';
 
-	if (instanceName === undefined) {
+	if (instanceName === undefined){
 		instanceName	= 'default';
 		log.debug(logPrefix + 'No instanceName given, falling back to "' + instanceName + '"');
 	} else {
@@ -42,13 +42,13 @@ function Instance() {
  * @param func cb(err, info)	https://github.com/nodemailer/nodemailer#sending-mail for details
  */
 Instance.prototype.send = function send(mailOptions, cb) {
-	const	logPrefix	= topLogPrefix + 'send() - uuid: ' + uuid + ' ',
-		uuid	= uuidLib.v4();
+	const	uuid	= uuidLib.v4(),
+		logPrefix	= topLogPrefix + 'send() - uuid: ' + uuid + ' ';
 
 	log.verbose(logPrefix + 'To: "' + mailOptions.to + '" Subject: "' + mailOptions.subject + '"');
 
 	if (typeof cb !== 'function') {
-		cb = function(){};
+		cb = function () {};
 	}
 
 	if (this.transport === undefined) {
@@ -67,7 +67,7 @@ Instance.prototype.send = function send(mailOptions, cb) {
 		mailOptions.from	= this.options.mailDefaults.from;
 	}
 
-	this.transport.sendMail(mailOptions, function(err, info) {
+	this.transport.sendMail(mailOptions, function (err, info) {
 		if (err) {
 			log.warn(logPrefix + 'err: ' + err.message);
 			return cb(err, info);
@@ -136,7 +136,7 @@ function setup(options) {
 	try {
 		exports.instances[options.instanceName].transport = nodeMailer.createTransport(options.transportConf);
 		return true;
-	} catch(err) {
+	} catch (err) {
 		log.warn(logPrefix + 'Could not configure transport: ' + err.message + ' transporConf: ' + util.inspect(options.transportConf));
 		return false;
 	}

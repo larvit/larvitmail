@@ -1,83 +1,52 @@
 'use strict';
 
-const	//larvitMail	= require(__dirname + '/../index.js'),
-	assert	= require('assert'),
+const	larvitmail	= require(__dirname + '/../index.js'),
+	mailConf	= require(__dirname + '/../config/mailConf_test.json'),
+	test	= require('tape'),
 	log	= require('winston');
 
 log.remove(log.transports.Console);
 
-describe('dummy', function() {
-	it('is dumb', function(done) {
-		assert(true);
-		done();
+test('should send a text email', function (t) {
+
+	let mailOptions = {
+		to: 'bar@example.com',
+		subject: 'Hello',
+		text: 'Hello world'
+	};
+
+	larvitmail.setup(mailConf);
+	
+	larvitmail.getInstance().send(mailOptions, function (err, response) {
+		if (err) throw err;
+		t.equal(response.accepted.length, 1);
+		t.equal(response.rejected.length, 0);
+		t.equal(response.envelope.from, 'foo@bar.com');
+		t.equal(response.envelope.to[0], 'bar@example.com');
+
+		t.end();
 	});
 });
 
-/* Older tests
-describe('Mail', function() {
+test('should send a html email', function (t) {
 
-	it('should instantiate a new plain mail object', function(done) {
-		const mail = new larvitmail.Mail();
+	let mailOptions = {
+		from: 'untz@example.com',
+		to: 'bar@example.com',
+		subject: 'Hello',
+		html: '<html><body><h1>Hello Cleveland!</h1></body></html>',
+		isHtml: true
+	};
 
-		assert.deepEqual(toString.call(mail), '[object Object]');
-		assert.deepEqual(toString.call(mail.mailOptions), '[object Object]');
+	larvitmail.setup(mailConf);
+	
+	larvitmail.getInstance().send(mailOptions, function (err, response) {
+		if (err) throw err;
+		t.equal(response.accepted.length, 1);
+		t.equal(response.rejected.length, 0);
+		t.equal(response.envelope.from, 'untz@example.com');
+		t.equal(response.envelope.to[0], 'bar@example.com');
 
-		done();
+		t.end();
 	});
-
-	it('should instantiate a new plain mail object, with object as option', function(done) {
-		const mail = new larvitmail.Mail({});
-
-		assert.deepEqual(toString.call(mail), '[object Object]');
-		assert.deepEqual(toString.call(mail.transporter), '[object Object]');
-		assert.deepEqual(toString.call(mail.mailOptions), '[object Object]');
-
-		done();
-	});
-
-	it('should instantiate a new plain mail object, with a default config', function(done) {
-		const mail = new larvitmail.Mail();
-
-		assert.deepEqual(toString.call(mail.mailConf), '[object Object]');
-		assert.deepEqual(mail.mailConf.host, 'localhost');
-		assert.deepEqual(mail.mailConf.port, 25);
-		assert.deepEqual(mail.mailConf.ignoreTLS, true);
-		assert.deepEqual(mail.mailConf.defaultFrom, 'gagge@larvit.se');
-
-		done();
-	});
-
-	it('should instantiate a new plain mail object, with a ready transporter', function(done) {
-		const mail = new larvitmail.Mail();
-
-		assert.deepEqual(toString.call(mail.transporter), '[object Object]');
-		assert(mail.transporter.transporter);
-
-		done();
-	});
-
-	it('should send an email', function(done) {
-
-		let mailOptions = {
-			from: 'foo@example.com',
-			to: 'bar@example.com',
-			subject: 'Hello',
-			text: 'Hello world',
-			html: '<b>Hello world</b>'
-		};
-
-		const mail = new larvitmail.Mail(mailOptions);
-
-		mail.send(function(err, response) {
-			assert( ! err, 'err should be negative');
-			assert.deepEqual(response.accepted.length, 1);
-			assert.deepEqual(response.rejected.length, 0);
-			assert.deepEqual(response.envelope.from, 'foo@example.com');
-			assert.deepEqual(response.envelope.to[0], 'bar@example.com');
-
-			done();
-		});
-
-	});
-
-});*/
+});
