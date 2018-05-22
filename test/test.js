@@ -19,7 +19,7 @@ test('should send a text email', function (t) {
 	let mailOptions = {
 			to: 'bar@foo.com',
 			subject: 'Hello',
-			text: 'Hello world'
+			text: 'Hello world' 
 		},
 		mailRecieved	= false;
 
