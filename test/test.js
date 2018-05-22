@@ -77,7 +77,7 @@ test('should send a html email', function (t) {
 		t.equal(response.envelope.to[0], 'bar@foo.com');
 		t.equal(mailRecieved, true);
 
-		mailServer.stop(); 
+		mailServer.stop();
 		t.end();
 	});
 });
