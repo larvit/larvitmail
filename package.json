@@ -17,7 +17,7 @@
     "smtp-tester": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "tape test/*.js"
   },
   "repository": "https://github.com/larvit/larvitmail.git",
   "keywords": [
