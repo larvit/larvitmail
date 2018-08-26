@@ -1,4 +1,5 @@
 # larvitmail
+
 Mailer wrapper for nodejs
 
 ## Installation
@@ -14,11 +15,10 @@ npm i larvitmail
 Defaults to SMTP localhost
 
 ```javascript
-const mail = require('larvitmail');
+const Mail = require('larvitmail');
+const mail = new Mail();
 
-mail.setup();
-
-mail.getInstance().send({
+mail.send({
 	'from':	'foo@bar.com',
 	'to':	'someone@someplace.com',
 	'subject':	'test',
@@ -32,16 +32,16 @@ mail.getInstance().send({
 ### Custom configuration
 
 ```javascript
-const mail = require('larvitmail');
-
-mail.setup({
+const Mail = require('larvitmail');
+const mail = new Mail({
+	'log':           new (new (require('larvitutils'))()).Log('verbose'),
 	'transportConf': 'smtps://user%40gmail.com:pass@smtp.gmail.com',
 	'mailDefaults': {
 		'from': 'foo@bar.com'
 	}
 });
 
-mail.getInstance().send({
+mail.send({
 	'to':	'someone@someplace.com',
 	'subject':	'test',
 	'text':	'BAM!'
@@ -50,7 +50,3 @@ mail.getInstance().send({
 	console.log('Mail sent');
 });
 ```
-
-## Wtf indention in the source code?
-
-It is indented with [elastic tabstops](http://nickgravgaard.com/elastic-tabstops/). If you are using Atom you can use [this plugin](https://atom.io/packages/elastic-tabstops).
