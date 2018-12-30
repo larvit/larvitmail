@@ -13,7 +13,7 @@
     "coveralls": "3.0.2",
     "eslint": "5.4.0",
     "istanbul": "0.4.5",
-    "lodash": "4.17.10",
+    "lodash": "4.17.11",
     "tape": "4.9.2",
     "tape-eslint": "1.2.1",
     "smtp-tester": "1.2.0"
