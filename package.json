@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "coveralls": "3.0.3",
-    "eslint": "5.14.1",
+    "eslint": "5.15.0",
     "istanbul": "0.4.5",
     "lodash": "4.17.11",
     "tape": "4.10.1",
