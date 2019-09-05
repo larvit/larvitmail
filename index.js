@@ -5,6 +5,7 @@ const nodeMailer   = require('nodemailer');
 const uuidLib      = require('uuid');
 const LUtils       = require('larvitutils');
 const util         = require('util');
+const ejs			= require('ejs');
 
 /**
  * Module main constructor
@@ -84,6 +85,22 @@ Mail.prototype.send = function send(mailOptions, cb) {
 
 	if (mailOptions.from === undefined) {
 		mailOptions.from = that.options.mailDefaults.from;
+	}
+
+	if (mailOptions.template !== undefined && mailOptions.templateData !== undefined) {
+		try {
+			const body = ejs.render(mailOptions.template, mailOptions.templateData);
+
+			if (mailOptions.isHtml) {
+				mailOptions.html = body;
+			} else {
+				mailOptions.text = body;
+			}
+		} catch (err) {
+			that.log.error(logPrefix + 'Failed to compile template: ' + err.message);
+
+			return cb(err);
+		}
 	}
 
 	that.transport.sendMail(mailOptions, function (err, info) {
