@@ -4,7 +4,7 @@
   "description": "nodemailer wrapper",
   "main": "index.js",
   "dependencies": {
-    "async": "^2.6.1",
+    "async": "^3.0.0",
     "ejs": "^2.7.1",
     "larvitutils": "^2.1.0",
     "nodemailer": "^5.0.0",
