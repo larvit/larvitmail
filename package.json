@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "async": "^2.6.1",
-    "ejs": "^2.7.1",
+    "ejs": "^3.0.0",
     "larvitutils": "^2.1.0",
     "nodemailer": "^5.0.0",
     "uuid": "^3.0.0"
