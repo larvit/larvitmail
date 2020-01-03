@@ -1,40 +1,38 @@
 'use strict';
 
 const topLogPrefix = 'larvitmail: ./index.js: ';
-const nodeMailer   = require('nodemailer');
-const uuidLib      = require('uuid');
-const LUtils       = require('larvitutils');
-const util         = require('util');
-const ejs			= require('ejs');
+const nodeMailer = require('nodemailer');
+const uuidLib = require('uuid');
+const { Log } = require('larvitutils');
+const util = require('util');
+const ejs = require('ejs');
 
 /**
  * Module main constructor
  *
  * @param {obj} options {
- * 	'transportConf': str or obj - Directly forwarded to nodeMailer.createTransport() see docs at https://github.com/nodemailer/nodemailer
- * 	'mailDefaults': {
- * 		'from': 'foo@bar.com', // Defaults to 'node@ + require('os').hostname() + '.local'
- * 	},
- * 	'instanceName': str // Defaults to "default"
+ * 'transportConf': str or obj - Directly forwarded to nodeMailer.createTransport() see docs at https://github.com/nodemailer/nodemailer
+ * 'mailDefaults': {
+ * 'from': 'foo@bar.com', // Defaults to 'node@ + require('os').hostname() + '.local'
+ * },
+ * 'instanceName': str // Defaults to "default"
  * }
  */
 function Mail(options) {
 	const logPrefix = topLogPrefix + 'Mail() - ';
-	const that      = this;
+	const that = this;
 
 	that.options = options || {};
 
-	if (! that.options.log) {
-		const lUtils = new LUtils();
-
-		that.options.log = new lUtils.Log();
+	if (!that.options.log) {
+		that.options.log = new Log();
 	}
 	that.log = that.options.log;
 
-	if (that.options.transportConf     === undefined) { that.options.transportConf     = {'port': 25, 'host': 'localhost', 'ignoreTLS': true}; }
-	if (that.options.instanceName      === undefined) { that.options.instanceName      = 'default';                                            }
-	if (that.options.mailDefaults      === undefined) { that.options.mailDefaults      = {};                                                   }
-	if (that.options.mailDefaults.from === undefined) { that.options.mailDefaults.from = 'node@' + require('os').hostname() + '.local';        }
+	if (that.options.transportConf === undefined) { that.options.transportConf = { port: 25, host: 'localhost', ignoreTLS: true}; }
+	if (that.options.instanceName === undefined) { that.options.instanceName = 'default'; }
+	if (that.options.mailDefaults === undefined) { that.options.mailDefaults = {}; }
+	if (that.options.mailDefaults.from === undefined) { that.options.mailDefaults.from = 'node@' + require('os').hostname() + '.local'; }
 
 	that.log.info(logPrefix + 'Running with options: ' + util.inspect(options));
 
@@ -57,8 +55,8 @@ function Mail(options) {
  * @returns {obj}             - This instance
  */
 Mail.prototype.send = function send(mailOptions, cb) {
-	const uuid      = uuidLib.v4();
-	const that      = this;
+	const uuid = uuidLib.v4();
+	const that = this;
 	const logPrefix = topLogPrefix + 'send() - uuid: ' + uuid + ' ';
 
 	that.log.verbose(logPrefix + 'To: "' + mailOptions.to + '" Subject: "' + mailOptions.subject + '"');
