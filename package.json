@@ -8,7 +8,7 @@
     "ejs": "3.0.1",
     "larvitutils": "3.2.0",
     "nodemailer": "6.4.6",
-    "uuid": "3.4.0"
+    "uuid": "7.0.3"
   },
   "devDependencies": {
     "coveralls": "3.0.11",
