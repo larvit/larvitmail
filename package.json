@@ -15,7 +15,7 @@
     "eslint": "6.8.0",
     "istanbul": "0.4.5",
     "lodash": "4.17.15",
-    "tape": "4.13.2",
+    "tape": "5.2.2",
     "tape-eslint": "1.2.1",
     "smtp-tester": "1.2.0"
   },
