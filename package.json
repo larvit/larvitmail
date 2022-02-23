@@ -1,26 +1,32 @@
 {
   "name": "larvitmail",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "description": "nodemailer wrapper",
   "main": "index.js",
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "test/"
+  ],
   "dependencies": {
-    "async": "3.2.0",
-    "ejs": "3.0.1",
-    "larvitutils": "3.2.0",
-    "nodemailer": "6.4.6",
-    "uuid": "3.4.0"
+    "async": "3.2.3",
+    "ejs": "3.1.6",
+    "larvitutils": "5.0.0",
+    "nodemailer": "6.7.2",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
-    "coveralls": "3.0.11",
-    "eslint": "6.8.0",
-    "istanbul": "0.4.5",
-    "lodash": "4.17.15",
-    "tape": "4.13.2",
-    "tape-eslint": "1.2.1",
-    "smtp-tester": "1.2.0"
+    "eslint": "8.9.0",
+    "mailparser": "^3.4.0",
+    "nyc": "^15.1.0",
+    "smtp-server": "^3.9.0",
+    "tape": "5.5.2"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "lint": "eslint *.js test/*.js",
+    "test:unit": "tape test/*.js",
+    "test:cov": "nyc --reporter=lcov --reporter=text-summary npm run test:unit",
+    "test": "npm run lint && npm run test:cov"
   },
   "repository": "https://github.com/larvit/larvitmail.git",
   "keywords": [

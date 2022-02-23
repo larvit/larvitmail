@@ -1,10 +1,13 @@
 'use strict';
 
-const Larvitmail = require(__dirname + '/../index.js');
+const assert = require('assert');
 const { Log } = require('larvitutils');
+const Larvitmail = require(__dirname + '/../index.js');
+const MailServer = require('./utils/mailServer');
+const os = require('os');
 const test = require('tape');
-const log = new Log('warn');
-const ms = require('smtp-tester');
+
+const log = new Log('error');
 const mailConf = {
 	log,
 	mailDefaults: {
@@ -13,9 +16,23 @@ const mailConf = {
 	transportConf: 'smtp://localhost:2525',
 };
 
-test('should send a text email', function (t) {
-	const mailServer = ms.init(2525);
+const mailServer = new MailServer();
+mailServer.start(2525);
 
+test('should construct with default options', async t => {
+	const larvitmail = new Larvitmail();
+
+	t.deepEqual(larvitmail.transportConf, { port: 25, host: 'localhost', ignoreTLS: true });
+	t.deepEqual(larvitmail.mailDefaults, { from: `node@${os.hostname()}.local`});
+});
+
+test('should throw error if constructed with bad transport config', async t => {
+	t.throws(() => new Larvitmail({
+		transportConf: 'asdf://neee',
+	}), /Cannot create property \'mailer\' on string \'asdf:\/\/neee\'/, 'Did not get expected exception');
+});
+
+test('should send a text email', async t => {
 	let mailOptions = {
 		to: 'bar@foo.com',
 		subject: 'Hello',
@@ -23,32 +40,24 @@ test('should send a text email', function (t) {
 	};
 	let mailRecieved = false;
 
-	mailServer.bind('bar@foo.com', function (add, id, mail) {
-		t.equal(add, 'bar@foo.com');
+	mailServer.setHandler(function (mail) {
 		t.equal(mail.sender, 'foo@bar.com');
-		t.equal(mail.receivers['bar@foo.com'], true);
+		t.equal(mail.receivers[0], 'bar@foo.com');
 		t.equal(mail.headers['content-type'].value, 'text/plain');
 		mailRecieved = true;
 	});
 
 	const larvitmail = new Larvitmail(mailConf);
 
-	larvitmail.send(mailOptions, function (err, response) {
-		if (err) throw err;
-		t.equal(response.accepted.length, 1);
-		t.equal(response.rejected.length, 0);
-		t.equal(response.envelope.from, 'foo@bar.com');
-		t.equal(response.envelope.to[0], 'bar@foo.com');
-		t.equal(mailRecieved, true);
-
-		mailServer.stop();
-		t.end();
-	});
+	const response = await larvitmail.send(mailOptions);
+	t.equal(response.accepted.length, 1);
+	t.equal(response.rejected.length, 0);
+	t.equal(response.envelope.from, 'foo@bar.com');
+	t.equal(response.envelope.to[0], 'bar@foo.com');
+	t.equal(mailRecieved, true);
 });
 
-test('should send an html email', function (t) {
-	const mailServer = ms.init(2525);
-
+test('should send an html email', async t => {
 	let mailOptions = {
 		from: 'untz@example.com',
 		to: 'bar@foo.com',
@@ -58,32 +67,24 @@ test('should send an html email', function (t) {
 	};
 	let mailRecieved = false;
 
-	mailServer.bind('bar@foo.com', function (add, id, mail) {
-		t.equal(add, 'bar@foo.com');
+	mailServer.setHandler(function (mail) {
 		t.equal(mail.sender, 'untz@example.com');
-		t.equal(mail.receivers['bar@foo.com'], true);
+		t.equal(mail.receivers[0], 'bar@foo.com');
 		t.equal(mail.headers['content-type'].value, 'text/html');
 		mailRecieved = true;
 	});
 
 	const larvitmail = new Larvitmail(mailConf);
 
-	larvitmail.send(mailOptions, function (err, response) {
-		if (err) throw err;
-		t.equal(response.accepted.length, 1);
-		t.equal(response.rejected.length, 0);
-		t.equal(response.envelope.from, 'untz@example.com');
-		t.equal(response.envelope.to[0], 'bar@foo.com');
-		t.equal(mailRecieved, true);
-
-		mailServer.stop();
-		t.end();
-	});
+	const response = await larvitmail.send(mailOptions);
+	t.equal(response.accepted.length, 1);
+	t.equal(response.rejected.length, 0);
+	t.equal(response.envelope.from, 'untz@example.com');
+	t.equal(response.envelope.to[0], 'bar@foo.com');
+	t.equal(mailRecieved, true);
 });
 
-test('should send a text email based on template', function (t) {
-	const mailServer = ms.init(2525);
-
+test('should send a text email based on template', async t => {
 	let mailOptions = {
 		to: 'bar@foo.com',
 		subject: 'Hello',
@@ -92,10 +93,9 @@ test('should send a text email based on template', function (t) {
 	};
 	let mailRecieved = false;
 
-	mailServer.bind('bar@foo.com', function (add, id, mail) {
-		t.equal(add, 'bar@foo.com');
+	mailServer.setHandler(function (mail) {
 		t.equal(mail.sender, 'foo@bar.com');
-		t.equal(mail.receivers['bar@foo.com'], true);
+		t.equal(mail.receivers[0], 'bar@foo.com');
 		t.equal(mail.headers['content-type'].value, 'text/plain');
 		t.equal(mail.body, 'Hello bar!');
 		mailRecieved = true;
@@ -103,22 +103,27 @@ test('should send a text email based on template', function (t) {
 
 	const larvitmail = new Larvitmail(mailConf);
 
-	larvitmail.send(mailOptions, function (err, response) {
-		if (err) throw err;
-		t.equal(response.accepted.length, 1);
-		t.equal(response.rejected.length, 0);
-		t.equal(response.envelope.from, 'foo@bar.com');
-		t.equal(response.envelope.to[0], 'bar@foo.com');
-		t.equal(mailRecieved, true);
-
-		mailServer.stop();
-		t.end();
-	});
+	const response = await larvitmail.send(mailOptions);
+	t.equal(response.accepted.length, 1);
+	t.equal(response.rejected.length, 0);
+	t.equal(response.envelope.from, 'foo@bar.com');
+	t.equal(response.envelope.to[0], 'bar@foo.com');
+	t.equal(mailRecieved, true);
 });
 
-test('should send an html email based on template', function (t) {
-	const mailServer = ms.init(2525);
+test('should throw an error on send if template has errors', async () => {
+	const larvitmail = new Larvitmail(mailConf);
 
+	mailServer.setHandler(() => {});
+
+	await assert.rejects(async () => larvitmail.send({
+		to: 'bar@foo.com',
+		template: 'Hello <%= whops, missing percentage here >!',
+		templateData: {},
+	}), new Error('Could not find matching close tag for "<%=".'));
+});
+
+test('should send an html email based on template', async t => {
 	let mailOptions = {
 		from: 'untz@example.com',
 		to: 'bar@foo.com',
@@ -130,10 +135,9 @@ test('should send an html email based on template', function (t) {
 
 	let mailRecieved = false;
 
-	mailServer.bind('bar@foo.com', function (add, id, mail) {
-		t.equal(add, 'bar@foo.com');
+	mailServer.setHandler(function (mail) {
 		t.equal(mail.sender, 'untz@example.com');
-		t.equal(mail.receivers['bar@foo.com'], true);
+		t.equal(mail.receivers[0], 'bar@foo.com');
 		t.equal(mail.headers['content-type'].value, 'text/html');
 		t.equal(mail.html, '<html><body><h1>Hello bar!</h1></body></html>');
 		t.equal(mail.body, 'HELLO BAR!');
@@ -142,15 +146,55 @@ test('should send an html email based on template', function (t) {
 
 	const larvitmail = new Larvitmail(mailConf);
 
-	larvitmail.send(mailOptions, function (err, response) {
-		if (err) throw err;
-		t.equal(response.accepted.length, 1);
-		t.equal(response.rejected.length, 0);
-		t.equal(response.envelope.from, 'untz@example.com');
-		t.equal(response.envelope.to[0], 'bar@foo.com');
-		t.equal(mailRecieved, true);
+	const response = await larvitmail.send(mailOptions);
+	t.equal(response.accepted.length, 1);
+	t.equal(response.rejected.length, 0);
+	t.equal(response.envelope.from, 'untz@example.com');
+	t.equal(response.envelope.to[0], 'bar@foo.com');
+	t.equal(mailRecieved, true);
+});
 
-		mailServer.stop();
-		t.end();
+test('should try and send a mail that gets rejected by server', async () => {
+	const larvitmail = new Larvitmail(mailConf);
+
+	mailServer.setHandler(() => {});
+	mailServer.rejectNextEmail();
+
+	await assert.rejects(async () => await larvitmail.send({
+		to: 'bar@foo.com',
+		text: 'Heya',
+	}), new Error('Can\'t send mail - all recipients were rejected: 550 Rejected email from bar@foo.com'));
+});
+
+test('should try and send a mail to multiple recipients where not all gets rejected by server', async t => {
+	const larvitmail = new Larvitmail(mailConf);
+
+	mailServer.setHandler(() => {});
+	mailServer.rejectNextEmail();
+
+	const result = await await larvitmail.send({
+		to: 'bar@foo.com, korv@nisse.com',
+		text: 'Heya',
 	});
+
+	t.deepEqual(result.rejected, ['bar@foo.com']);
+	t.deepEqual(result.accepted, ['korv@nisse.com']);
+});
+
+test('should send with bcc address', async t => {
+	const larvitmail = new Larvitmail(mailConf);
+
+	mailServer.setHandler(() => {});
+
+	const result = await await larvitmail.send({
+		to: 'bar@foo.com',
+		bcc: 'korv@nisse.com',
+		text: 'Heya',
+	});
+
+	t.deepEqual(result.accepted, ['bar@foo.com', 'korv@nisse.com']);
+});
+
+test('stop test SMTP server', (t) => {
+	mailServer.stop(t.end);
 });
