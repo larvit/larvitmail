@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/larvit/larvitmail/actions/workflows/actions.yml/badge.svg)](https://github.com/larvit/larvitmail/actions)
+[![Build Status](https://github.com/larvit/larvitmail/actions/workflows/ci.yml/badge.svg)](https://github.com/larvit/larvitmail/actions)
 
 # larvitmail
 
