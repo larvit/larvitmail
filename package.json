@@ -1,6 +1,6 @@
 {
   "name": "larvitmail",
-  "version": "3.0.60",
+  "version": "3.0.61",
   "description": "nodemailer wrapper",
   "main": "index.js",
   "files": [
@@ -9,14 +9,14 @@
     "test/"
   ],
   "dependencies": {
-    "async": "3.2.4",
+    "async": "3.2.5",
     "ejs": "3.1.9",
-    "larvitutils": "5.1.58",
+    "larvitutils": "5.1.60",
     "nodemailer": "6.9.7",
     "uuid": "9.0.1"
   },
   "devDependencies": {
-    "eslint": "8.52.0",
+    "eslint": "8.53.0",
     "mailparser": "3.6.5",
     "nyc": "15.1.0",
     "smtp-server": "3.13.0",
