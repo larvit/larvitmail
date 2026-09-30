@@ -1,11 +1,11 @@
 'use strict';
 
+const { randomUUID } = require('crypto');
 const { Log } = require('larvitutils');
 const ejs = require('ejs');
 const nodeMailer = require('nodemailer');
 const os = require('os');
 const util = require('util');
-const uuidLib = require('uuid');
 
 const topLogPrefix = 'larvitmail: ./index.js:';
 
@@ -53,7 +53,7 @@ class Mail {
 	 * @returns {obj}             - Send mail info, https://github.com/nodemailer/nodemailer#sending-mail for details
 	 */
 	async send(mailOptions) {
-		const uuid = uuidLib.v4();
+		const uuid = randomUUID();
 		const logPrefix = `${topLogPrefix} send() - uuid: ${uuid}`;
 
 		this.log.verbose(`${logPrefix} Sending To: "${mailOptions.to}", Bcc: "${mailOptions.bcc}" Subject: "${mailOptions.subject}"`);

@@ -12,8 +12,7 @@
     "async": "3.2.6",
     "ejs": "6.0.1",
     "larvitutils": "5.1.211",
-    "nodemailer": "10.0.13",
-    "uuid": "14.0.2"
+    "nodemailer": "10.0.13"
   },
   "devDependencies": {
     "eslint": "10.11.0",
